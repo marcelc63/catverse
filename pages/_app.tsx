@@ -5,7 +5,7 @@ import 'tailwindcss/tailwind.css'
 import Head from 'next/head'
 import { Settings } from 'luxon'
 
-import '~/styles/globals.css'
+import '~/styles/globals.scss'
 import store from '~/store/store'
 
 import ProtectRoute from '~/components/ProtectRoute'
@@ -17,8 +17,8 @@ const MyApp: React.FC<AppProps> = (props: AppProps) => {
   return (
     <Provider store={store}>
       <Head>
-        <title>Pemantauan Vaksinasi</title>
-        <meta name="description" content="Aplikasi Pemantauan Vaksinasi" />
+        <title>Next Typescript</title>
+        <meta name="description" content="Next with Typescript" />
         <link rel="icon" href="/favicon.ico" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link

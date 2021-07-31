@@ -2,10 +2,12 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
 import {
   constructSuccessPayload,
   constructErrorPayload,
+  constructDataValidationErrorPayload,
   constructExtraReducer,
 } from '~/store/helper'
 import { get as getCall, register as registerCall } from '~/api/user'
 import { authenticate } from '~/store/auth'
+import { schema } from '~/interfaces/Register'
 
 interface IState {
   user: object
@@ -32,15 +34,20 @@ export const get = createAsyncThunk(
 export const register = createAsyncThunk(
   'user/register',
   async (payload: object, { rejectWithValue, dispatch }) => {
-    const [res, resErr] = await registerCall(payload)
-    if (resErr) {
-      return rejectWithValue(constructErrorPayload(resErr))
+    try {
+      const validatedPayload = schema.parse(payload)
+      const [res, resErr] = await registerCall(validatedPayload)
+      if (resErr) {
+        return rejectWithValue(constructErrorPayload(resErr))
+      }
+      dispatch({
+        type: authenticate.toString(),
+        payload: constructSuccessPayload(res),
+      })
+      return constructSuccessPayload(res)
+    } catch (err) {
+      return constructDataValidationErrorPayload(err)
     }
-    dispatch({
-      type: authenticate.toString(),
-      payload: constructSuccessPayload(res),
-    })
-    return constructSuccessPayload(res)
   }
 )
 
