@@ -11,11 +11,11 @@ interface IState {
   loading: object
   responses: object
 }
-const initialState = {
+const initialState: IState = {
   authenticated: false,
   loading: {},
   responses: {},
-} as IState
+}
 
 export const login = createAsyncThunk(
   'auth/login',

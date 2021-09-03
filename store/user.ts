@@ -14,7 +14,7 @@ interface IState {
   loading: object
   responses: object
 }
-const initialState = { user: {}, loading: {}, responses: {} } as IState
+const initialState: IState = { user: {}, loading: {}, responses: {} }
 
 export const get = createAsyncThunk(
   'user/get',
