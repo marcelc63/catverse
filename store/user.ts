@@ -46,7 +46,7 @@ export const register = createAsyncThunk(
       })
       return constructSuccessPayload(res)
     } catch (err) {
-      return constructDataValidationErrorPayload(err)
+      return rejectWithValue(constructDataValidationErrorPayload(err))
     }
   }
 )
