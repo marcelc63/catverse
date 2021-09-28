@@ -5,6 +5,13 @@ import {
 } from '@reduxjs/toolkit'
 import { Loading } from '~/interfaces/Responses'
 
+export const constructStaticPayload = (res: any) => {
+  return {
+    status: 200,
+    statusText: 'Static',
+    body: res,
+  }
+}
 export const constructSuccessPayload = (res: any) => {
   return {
     status: res.status,

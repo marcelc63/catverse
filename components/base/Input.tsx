@@ -11,10 +11,11 @@ interface IInput {
   placeholder: string
   type?: string
   name?: FieldValue<any>
-  value?: string
   className?: string
   register?: UseFormRegister<FieldValues>
   errors?: DeepMap<FieldValues, FieldError>
+  defaultValue?: any
+  required?: boolean
 }
 
 const Input: React.FC<IInput> = ({
@@ -22,17 +23,19 @@ const Input: React.FC<IInput> = ({
   type = 'text',
   className = '',
   name,
-  value,
   register,
   errors,
+  defaultValue,
+  required,
 }: IInput) => {
   return register ? (
     <>
       <input
+        required={required}
         className={`border border-gray-200 rounded w-full p-2 ${className}`}
         placeholder={placeholder}
         type={type}
-        value={value}
+        defaultValue={defaultValue}
         {...register(name)}
       />
       {errors?.[name] && (
@@ -41,11 +44,12 @@ const Input: React.FC<IInput> = ({
     </>
   ) : (
     <input
+      required={required}
       className={`border border-gray-200 rounded w-full p-2 ${className}`}
       placeholder={placeholder}
       type={type}
-      value={value}
       name={name}
+      defaultValue={defaultValue}
     />
   )
 }

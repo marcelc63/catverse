@@ -15,7 +15,6 @@ const Modal: React.FC<IModal> = ({ open, close, title, children }) => {
       <div
         className={styles['modal-wrapper']}
         onClick={(event) => {
-          event.preventDefault()
           if (event.target === event.currentTarget) {
             close()
           }
