@@ -55,7 +55,7 @@ export const reducerSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    resetResponse(state: any, action: PayloadAction<any>) {
+    resetResponse(state: IState, action: PayloadAction<any>) {
       const apiName = action.payload
       state.responses = {
         ...state.responses,
@@ -67,10 +67,8 @@ export const reducerSlice = createSlice({
     constructExtraReducer(
       builder,
       get,
-      (_: IState, action: PayloadAction<any>) => {
-        return {
-          user: action.payload.user,
-        }
+      (state: IState, action: PayloadAction<any>) => {
+        state.user = action.payload.user
       }
     )
     constructExtraReducer(builder, register)

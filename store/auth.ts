@@ -43,20 +43,16 @@ export const reducerSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    authenticate(state) {
+    authenticate(state: IState) {
       state.authenticated = true
     },
   },
   extraReducers: (builder) => {
-    constructExtraReducer(builder, login, () => {
-      return {
-        authenticated: true,
-      }
+    constructExtraReducer(builder, login, (state: IState) => {
+      state.authenticated = true
     })
-    constructExtraReducer(builder, logout, () => {
-      return {
-        authenticated: false,
-      }
+    constructExtraReducer(builder, logout, (state: IState) => {
+      state.authenticated = false
     })
   },
 })

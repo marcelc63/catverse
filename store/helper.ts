@@ -4,6 +4,7 @@ import {
   PayloadAction,
 } from '@reduxjs/toolkit'
 import { Loading } from '~/interfaces/Responses'
+import producer from 'immer'
 
 export const constructStaticPayload = (res: any) => {
   return {
@@ -97,9 +98,11 @@ export const constructExtraReducer = (
         payload: action.payload.body,
         type: action.type,
       }
+      const nextState = producer(state, (draftState: any) => {
+        mapState(draftState, payload)
+      })
       return {
-        ...mutateStateOnFulfilled(state, thunk.typePrefix, action),
-        ...mapState(state, payload),
+        ...mutateStateOnFulfilled(nextState, thunk.typePrefix, action),
       }
     }
     return {
