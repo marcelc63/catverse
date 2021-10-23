@@ -16,6 +16,8 @@ interface IInput {
   errors?: DeepMap<FieldValues, FieldError>
   defaultValue?: any
   required?: boolean
+  isNotFullWidth?: boolean
+  disabled?: boolean
 }
 
 const Input: React.FC<IInput> = ({
@@ -27,28 +29,39 @@ const Input: React.FC<IInput> = ({
   errors,
   defaultValue,
   required,
+  isNotFullWidth,
+  disabled,
 }: IInput) => {
+  let style = `border border-gray-200 rounded w-full p-2 ${className}`
+  if (isNotFullWidth) {
+    style = `border border-gray-200 rounded p-2 ${className}`
+  }
+
   return register ? (
     <>
       <input
         required={required}
-        className={`border border-gray-200 rounded w-full p-2 ${className}`}
+        className={style}
         placeholder={placeholder}
         type={type}
         defaultValue={defaultValue}
+        disabled={disabled}
         {...register(name)}
       />
       {errors?.[name] && (
-        <p className="mt-1 text-red-500 text-sm">{errors[name].message}</p>
+        <p className="text-red-500 text-xs italic mb-2">
+          {errors[name].message}
+        </p>
       )}
     </>
   ) : (
     <input
       required={required}
-      className={`border border-gray-200 rounded w-full p-2 ${className}`}
+      className={style}
       placeholder={placeholder}
       type={type}
       name={name}
+      disabled={disabled}
       defaultValue={defaultValue}
     />
   )

@@ -12,10 +12,20 @@ import ReactDatePicker from 'react-date-picker/dist/entry.nostyle'
 interface IDatePicker {
   name: string
   control: Control<any>
+  openCalendarOnFocus?: boolean
+  format?: string
   errors?: DeepMap<FieldValues, FieldError>
+  className?: string
 }
 
-const DatePicker: React.FC<IDatePicker> = ({ name, control, errors }) => {
+const DatePicker: React.FC<IDatePicker> = ({
+  name,
+  control,
+  errors,
+  format = 'dd/MM/y',
+  openCalendarOnFocus = true,
+  className,
+}) => {
   return (
     <>
       <Controller
@@ -23,11 +33,13 @@ const DatePicker: React.FC<IDatePicker> = ({ name, control, errors }) => {
         control={control}
         render={({ field: { onChange, value } }) => (
           <ReactDatePicker
-            format="dd/MM/y"
+            format={format}
+            openCalendarOnFocus={openCalendarOnFocus}
             onChange={(date: any) =>
               onChange(date ? (date as Date).toISOString() : null)
             }
             value={value ? new Date(value) : null}
+            className={className}
           />
         )}
       />
