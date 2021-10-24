@@ -125,9 +125,9 @@ export default function Component() {
   const renderContent = () => {
     if (!currentAccount) {
       return <Home connectWallet={connectWallet} />
-    } else if (currentAccount && characterNFT) {
-      return <SelectCharacter setCharacterNFT={setCharacterNFT} />
     } else if (currentAccount && !characterNFT) {
+      return <SelectCharacter setCharacterNFT={setCharacterNFT} />
+    } else if (currentAccount && characterNFT) {
       return (
         <Arena characterNFT={characterNFT} setCharacterNFT={setCharacterNFT} />
       )
@@ -137,7 +137,7 @@ export default function Component() {
   return (
     <Layout>
       <img src="/screens/Logo.png" className="max-w-lg mb-2" />
-      <p className="mb-4 text-lg">Protect the Catverse from Boss Cat!</p>
+      <p className="mb-4 text-lg">Protect the Catverse from the Big Cat!</p>
       {renderContent()}
       <p className="mt-4 text-sm">
         built by <a className="text-blue-500 underline">@marcelc63</a> as a{' '}

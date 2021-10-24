@@ -1,14 +1,15 @@
 import * as React from 'react'
-import { useEffect, useState, useMemo } from 'react'
-import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 
-import Layout from '~/layouts/Centered'
 import { ethers } from 'ethers'
-import Textarea from '~/components/base/controlled/Textarea'
 import Button from '~/components/base/Button'
-import { connect } from 'react-redux'
 
-import { CONTRACT_ADDRESS, transformCharacterData } from '~/constants'
+import {
+  CONTRACT_ADDRESS,
+  transformCharacterData,
+  getImageFromName,
+  getNameFromIndex,
+} from '~/constants'
 import myEpicGame from '~/assets/NFTGame.json'
 
 interface IProps {
@@ -56,13 +57,17 @@ const Component: React.FC<IProps> = ({ characterNFT, setCharacterNFT }) => {
 
       console.log(`AttackComplete: Boss Hp: ${bossHp} Player Hp: ${playerHp}`)
 
-      /*
-       * Update both player and boss Hp
-       */
       setBoss((prevState: any) => {
         return { ...prevState, hp: bossHp }
       })
+      setCharacterNFT((prevState: any) => {
+        return { ...prevState, hp: playerHp }
+      })
+    }
 
+    const onHealComplete = (newPlayerHp: any) => {
+      const playerHp = newPlayerHp.toNumber()
+      console.log(`AttackComplete: Player Hp: ${playerHp}`)
       setCharacterNFT((prevState: any) => {
         return { ...prevState, hp: playerHp }
       })
@@ -71,11 +76,13 @@ const Component: React.FC<IProps> = ({ characterNFT, setCharacterNFT }) => {
     if (gameContract) {
       fetchBoss()
       gameContract.on('AttackComplete', onAttackComplete)
+      gameContract.on('HealComplete', onHealComplete)
     }
 
     return () => {
       if (gameContract) {
         gameContract.off('AttackComplete', onAttackComplete)
+        gameContract.on('HealComplete', onHealComplete)
       }
     }
   }, [gameContract])
@@ -96,30 +103,133 @@ const Component: React.FC<IProps> = ({ characterNFT, setCharacterNFT }) => {
     }
   }
 
+  const runHealAction = async () => {
+    try {
+      if (gameContract) {
+        setAttackState('healing')
+        console.log('Attacking boss...')
+        const attackTxn = await gameContract.healCharacter()
+        await attackTxn.wait()
+        console.log('attackTxn:', attackTxn)
+        setAttackState('healed')
+      }
+    } catch (error) {
+      console.error('Error attacking boss:', error)
+      setAttackState('')
+    }
+  }
+
   return (
-    <div className="text-center">
-      {/* Boss */}
+    <div className="max-w-4xl w-full relative h-500px">
+      <img
+        src="/screens/Screen-2.png"
+        className="object-cover rounded absolute top-0 left-0 h-500px w-full"
+      />
       {boss && (
-        <div
-          className={`flex flex-col items-center mb-4 ${
-            attackState === 'attacking' ? `animate-bounce` : ` `
-          }`}
-        >
-          <p>{boss.name}</p>
-          <img src={boss.imageURI} className="w-40 rounded text-center" />
-          <p>{`${boss.hp} / 10000 HP`}</p>
-          <Button onClick={runAttackAction}>{`Attack ${boss.name}`}</Button>
+        <div className="absolute top-0 left-0 h-500px flex flex-col items-center justify-end w-full">
+          <div className="flex flex-row w-full justify-between max-w-lg ">
+            <div className="flex flex-col items-center">
+              <div className="bg-white rounded text-black p-2">
+                <div className="flex flex-row text-sm mb-1">
+                  <p className="mr-4">{characterNFT.name}</p>
+                  <p>{`${characterNFT.hp} / ${characterNFT.maxHp} HP`}</p>
+                </div>
+                <div className="h-2 bg-red-500 relative rounded">
+                  <div
+                    className="bg-green-500 h-2 rounded"
+                    style={{
+                      width: `${(characterNFT.hp / characterNFT.maxHp) * 100}%`,
+                    }}
+                  ></div>
+                </div>
+              </div>
+              <img
+                src={getImageFromName(characterNFT.name)}
+                className="w-40 rounded text-center"
+              />
+            </div>
+
+            <div
+              className={`flex flex-col items-center mb-4 ${
+                attackState === 'attacking' ? `animate-bounce` : ` `
+              }`}
+            >
+              <div className="bg-white rounded text-black p-2">
+                <div className="flex flex-row text-sm mb-1">
+                  <p className="mr-4">{boss.name}</p>
+                  <p>{`${boss.hp} / ${10000} HP`}</p>
+                </div>
+                <div className="h-2 bg-red-500 relative rounded">
+                  <div
+                    className="bg-green-500 h-2 rounded"
+                    style={{
+                      width: `${(boss.hp / 10000) * 100}%`,
+                    }}
+                  ></div>
+                </div>
+              </div>
+              <img
+                src={getImageFromName(boss.name)}
+                className="w-40 rounded text-center"
+              />
+            </div>
+          </div>
+          <div className="w-full p-2">
+            <div className="bg-gray-100 text-black w-full py-2 px-4 rounded-lg border-4 border-blue-500 text-lg">
+              {attackState === '' && (
+                <>
+                  <p>Choose your action</p>
+                  <div className="flex">
+                    <p
+                      className="w-auto hover:bg-gray-300 cursor-pointer mr-4"
+                      onClick={() => runAttackAction()}
+                    >{`> Attact ${characterNFT.attackDamage} dmg`}</p>
+                    <p
+                      className="w-auto hover:bg-gray-300 cursor-pointer"
+                      onClick={() => runHealAction()}
+                    >{`> Heal 100 hp`}</p>
+                  </div>
+                </>
+              )}
+              {attackState === 'attacking' && (
+                <p>
+                  {characterNFT.name} is attacking {boss.name}!
+                </p>
+              )}
+              {attackState === 'healing' && (
+                <p>{characterNFT.name} is healing...</p>
+              )}
+              {attackState === 'healed' && (
+                <>
+                  <p>{characterNFT.name} is healed</p>
+                  <div className="flex">
+                    <p
+                      className="w-auto hover:bg-gray-300 cursor-pointer"
+                      onClick={() => setAttackState('')}
+                    >{`> Choose another action`}</p>
+                  </div>
+                </>
+              )}
+              {attackState === 'hit' && (
+                <>
+                  {characterNFT.hp > 0 && (
+                    <p>
+                      {characterNFT.name} deals damage to {boss.name}!
+                    </p>
+                  )}
+                  {characterNFT.hp <= 0 && <p>{characterNFT.name} is dead!</p>}
+                  <div className="flex">
+                    <p
+                      className="w-auto hover:bg-gray-300 cursor-pointer"
+                      onClick={() => setAttackState('')}
+                    >{`> Choose another action`}</p>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
         </div>
       )}
-
-      {/* Character NFT */}
-      <div className="flex flex-col items-center">
-        <p>Your Character</p>
-        <p>{characterNFT.name}</p>
-        <img src={characterNFT.imageURI} className="w-40 rounded text-center" />
-        <p>{`${characterNFT.hp} / ${characterNFT.maxHp} HP`}</p>
-        <p>{`Attack Damage: ${characterNFT.attackDamage}`}</p>
-      </div>
     </div>
   )
 }
