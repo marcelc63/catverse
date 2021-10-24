@@ -1,35 +1,26 @@
 import * as React from 'react'
-import { useEffect, useState, useMemo } from 'react'
-import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 
 import Layout from '~/layouts/Centered'
 import { ethers } from 'ethers'
-import Textarea from '~/components/base/controlled/Textarea'
-import Button from '~/components/base/Button'
-import { connect } from 'react-redux'
 
 import { CONTRACT_ADDRESS, transformCharacterData } from '~/constants'
 import myEpicGame from '~/assets/NFTGame.json'
 import Home from '~/components/Home'
-import SelectCharacter from '~/components/SelectCharacter'
+import Selection from '~/components/Selection'
 import Arena from '~/components/Arena'
 
 export default function Component() {
-  const router = useRouter()
-  const { address } = router.query
   const [currentAccount, setCurrentAccount] = useState<string | undefined>(
     undefined
   )
   const [characterNFT, setCharacterNFT] = useState<any>(null)
-  const [network, setNetwork] = useState(0)
-  const [message, setMessage] = useState<string | undefined>(undefined)
-  const [tip, setTip] = useState('0.001')
 
   const checkNetwork = async () => {
     try {
       const { ethereum }: any = window
       if (ethereum) {
-        setNetwork(parseInt(ethereum.networkVersion))
+        console.log('Network exist!')
       } else {
         console.log("Ethereum object doesn't exist!")
       }
@@ -87,9 +78,6 @@ export default function Component() {
   }, [])
 
   useEffect(() => {
-    /*
-     * The function we will call that interacts with out smart contract
-     */
     const fetchNFTMetadata = async () => {
       console.log('Checking for Character NFT on address:', currentAccount)
 
@@ -112,21 +100,17 @@ export default function Component() {
       }
     }
 
-    /*
-     * We only want to run this, if we have a connected wallet
-     */
     if (currentAccount) {
       console.log('CurrentAccount:', currentAccount)
       fetchNFTMetadata()
     }
   }, [currentAccount])
 
-  // Render Methods
   const renderContent = () => {
     if (!currentAccount) {
       return <Home connectWallet={connectWallet} />
     } else if (currentAccount && !characterNFT) {
-      return <SelectCharacter setCharacterNFT={setCharacterNFT} />
+      return <Selection setCharacterNFT={setCharacterNFT} />
     } else if (currentAccount && characterNFT) {
       return (
         <Arena characterNFT={characterNFT} setCharacterNFT={setCharacterNFT} />

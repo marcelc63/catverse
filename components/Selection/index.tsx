@@ -20,12 +20,14 @@ const Component: React.FC<IProps> = ({ setCharacterNFT }) => {
   const [characters, setCharacters] = useState<any>([])
   const [gameContract, setGameContract] = useState<any>(null)
   const [chosenCat, setChosenCat] = useState<any>(null)
+  const [contractState, setContractState] = useState('')
 
   const mintCharacterNFTAction = async (characterId: any) => {
     try {
       console.log(gameContract, characterId)
       if (gameContract) {
         console.log('Minting character in progress...')
+        setContractState('minting')
         const mintTxn = await gameContract.mintCharacterNFT(characterId)
         await mintTxn.wait()
         console.log('mintTxn:', mintTxn)
@@ -71,9 +73,6 @@ const Component: React.FC<IProps> = ({ setCharacterNFT }) => {
       }
     }
 
-    /*
-     * Add a callback method that will fire when this event is received
-     */
     const onCharacterMint = async (
       sender: any,
       tokenId: any,
@@ -83,10 +82,6 @@ const Component: React.FC<IProps> = ({ setCharacterNFT }) => {
         `CharacterNFTMinted - sender: ${sender} tokenId: ${tokenId.toNumber()} characterIndex: ${characterIndex.toNumber()}`
       )
 
-      /*
-       * Once our character NFT is minted we can fetch the metadata from our contract
-       * and set it in state to move onto the Arena
-       */
       if (gameContract) {
         const characterNFT = await gameContract.checkIfUserHasNFT()
         console.log('CharacterNFT: ', characterNFT)
@@ -100,9 +95,6 @@ const Component: React.FC<IProps> = ({ setCharacterNFT }) => {
     }
 
     return () => {
-      /*
-       * When your component unmounts, let;s make sure to clean up this listener
-       */
       if (gameContract) {
         gameContract.off('CharacterNFTMinted', onCharacterMint)
       }
@@ -142,8 +134,10 @@ const Component: React.FC<IProps> = ({ setCharacterNFT }) => {
         )}
         <div className="w-full p-2">
           <div className="bg-gray-100 text-black w-full py-2 px-4 rounded-lg border-4 border-blue-500 text-lg">
-            {chosenCat == null && <p>Choose your Cat...</p>}
-            {chosenCat !== null && (
+            {chosenCat == null && contractState === '' && (
+              <p>Choose your Cat...</p>
+            )}
+            {chosenCat !== null && contractState === '' && (
               <>
                 <p>
                   You choose <b>{getNameFromIndex(chosenCat)}</b>
@@ -160,6 +154,7 @@ const Component: React.FC<IProps> = ({ setCharacterNFT }) => {
                 </div>
               </>
             )}
+            {contractState !== '' && <p>Minting your cat...</p>}
           </div>
         </div>
       </div>
