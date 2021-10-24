@@ -2,8 +2,9 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: Open Sans, 'sans-serif';
+  background: #1b1f23;
+  color: #ffffff;
 }
 
 a {
@@ -17,3 +18,7 @@ a {
 
 @import '~/styles/DatePicker.scss';
 @import '~/styles/Calendar.scss';
+
+.h-500px {
+  height: 500px;
+}

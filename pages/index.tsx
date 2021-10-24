@@ -10,10 +10,11 @@ import { connect } from 'react-redux'
 
 import { CONTRACT_ADDRESS, transformCharacterData } from '~/constants'
 import myEpicGame from '~/assets/NFTGame.json'
+import Home from '~/components/Home'
 import SelectCharacter from '~/components/SelectCharacter'
 import Arena from '~/components/Arena'
 
-export default function Home() {
+export default function Component() {
   const router = useRouter()
   const { address } = router.query
   const [currentAccount, setCurrentAccount] = useState<string | undefined>(
@@ -122,12 +123,8 @@ export default function Home() {
 
   // Render Methods
   const renderContent = () => {
-    if (!currentAccount) {
-      return (
-        <div>
-          <Button onClick={connectWallet}>Connect Wallet To Get Started</Button>
-        </div>
-      )
+    if (currentAccount) {
+      return <Home connectWallet={connectWallet} />
     } else if (currentAccount && !characterNFT) {
       return <SelectCharacter setCharacterNFT={setCharacterNFT} />
     } else if (currentAccount && characterNFT) {
@@ -139,10 +136,12 @@ export default function Home() {
 
   return (
     <Layout>
-      <p>Catverse</p>
-      <p>Team up to defeat the Catverse!</p>
+      <img src="/screens/Logo.png" className="max-w-lg" />
       {renderContent()}
-      <p>built by @marcelc63 as a @_buildspace project</p>
+      <p className="mt-4 text-sm">
+        built by <a className="text-blue-500 underline">@marcelc63</a> as a
+        <a className="text-blue-500 underline">@_buildspace</a> project
+      </p>
     </Layout>
   )
 }
