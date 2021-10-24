@@ -31,7 +31,7 @@ const ProtectRoute: React.FC<AppProps> = ({
       // router.push(`/login?redirected_from=${location.pathname}`)
     }
     if (!authenticated) {
-      dispatch(getUser())
+      // dispatch(getUser())
     }
   }, [authenticated])
 
