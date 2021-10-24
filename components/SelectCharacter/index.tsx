@@ -1,14 +1,15 @@
 import * as React from 'react'
-import { useEffect, useState, useMemo } from 'react'
-import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 
-import Layout from '~/layouts/Centered'
 import { ethers } from 'ethers'
-import Textarea from '~/components/base/controlled/Textarea'
 import Button from '~/components/base/Button'
-import { connect } from 'react-redux'
 
-import { CONTRACT_ADDRESS, transformCharacterData } from '~/constants'
+import {
+  CONTRACT_ADDRESS,
+  transformCharacterData,
+  getImageFromIndex,
+  getNameFromIndex,
+} from '~/constants'
 import myEpicGame from '~/assets/NFTGame.json'
 
 interface IProps {
@@ -18,9 +19,11 @@ interface IProps {
 const Component: React.FC<IProps> = ({ setCharacterNFT }) => {
   const [characters, setCharacters] = useState<any>([])
   const [gameContract, setGameContract] = useState<any>(null)
+  const [chosenCat, setChosenCat] = useState<any>(null)
 
-  const mintCharacterNFTAction = (characterId: any) => async () => {
+  const mintCharacterNFTAction = async (characterId: any) => {
     try {
+      console.log(gameContract, characterId)
       if (gameContract) {
         console.log('Minting character in progress...')
         const mintTxn = await gameContract.mintCharacterNFT(characterId)
@@ -107,29 +110,59 @@ const Component: React.FC<IProps> = ({ setCharacterNFT }) => {
   }, [gameContract])
 
   const renderCharacters = () =>
-    characters.map((character: any, index: number) => (
-      <div className="flex flex-col p-2" key={character.name}>
-        <div className="">
-          <p className="text-center">{character.name}</p>
+    characters
+      .filter((_: any, index: number) => {
+        if (chosenCat !== null) {
+          return index === chosenCat
+        }
+        return true
+      })
+      .map((character: any, index: number) => (
+        <div className="flex flex-col p-2" key={character.name}>
+          <img
+            src={getImageFromIndex(chosenCat || index)}
+            alt={character.name}
+            className="rounded cursor-pointer hover:animate-bounce"
+            onClick={() => setChosenCat(index)}
+          />
         </div>
-        <img
-          src={character.imageURI}
-          alt={character.name}
-          className="rounded"
-        />
-        <Button
-          className="text-center"
-          onClick={mintCharacterNFTAction(index)}
-        >{`Mint ${character.name}`}</Button>
-      </div>
-    ))
+      ))
 
   return (
-    <div className="">
-      <h2 className="text-center">Mint Your Hero. Choose wisely.</h2>
-      {characters.length > 0 && (
-        <div className="flex flex-row">{renderCharacters()}</div>
-      )}
+    <div className="max-w-4xl w-full relative h-500px">
+      <img
+        src="/screens/Screen-2.png"
+        className="object-cover rounded absolute top-0 left-0 h-500px w-full"
+      />
+      <div className="absolute top-0 left-0 h-500px flex flex-col items-center justify-end w-full">
+        {characters.length > 0 && (
+          <div className="flex flex-row justify-center items-center max-h-96">
+            {renderCharacters()}
+          </div>
+        )}
+        <div className="w-full p-2">
+          <div className="bg-gray-100 text-black w-full py-2 px-4 rounded-lg border-4 border-blue-500 text-lg">
+            {chosenCat == null && <p>Choose your Cat...</p>}
+            {chosenCat !== null && (
+              <>
+                <p>
+                  You choose <b>{getNameFromIndex(chosenCat)}</b>
+                </p>
+                <div className="flex">
+                  <p
+                    className="w-auto hover:bg-gray-300 cursor-pointer mr-2"
+                    onClick={() => mintCharacterNFTAction(chosenCat)}
+                  >{`> Yes`}</p>
+                  <p
+                    className="w-auto hover:bg-gray-300 cursor-pointer mr-2"
+                    onClick={() => setChosenCat(null)}
+                  >{`> No`}</p>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

@@ -123,11 +123,11 @@ export default function Component() {
 
   // Render Methods
   const renderContent = () => {
-    if (currentAccount) {
+    if (!currentAccount) {
       return <Home connectWallet={connectWallet} />
-    } else if (currentAccount && !characterNFT) {
-      return <SelectCharacter setCharacterNFT={setCharacterNFT} />
     } else if (currentAccount && characterNFT) {
+      return <SelectCharacter setCharacterNFT={setCharacterNFT} />
+    } else if (currentAccount && !characterNFT) {
       return (
         <Arena characterNFT={characterNFT} setCharacterNFT={setCharacterNFT} />
       )
@@ -136,10 +136,11 @@ export default function Component() {
 
   return (
     <Layout>
-      <img src="/screens/Logo.png" className="max-w-lg" />
+      <img src="/screens/Logo.png" className="max-w-lg mb-2" />
+      <p className="mb-4 text-lg">Protect the Catverse from Boss Cat!</p>
       {renderContent()}
       <p className="mt-4 text-sm">
-        built by <a className="text-blue-500 underline">@marcelc63</a> as a
+        built by <a className="text-blue-500 underline">@marcelc63</a> as a{' '}
         <a className="text-blue-500 underline">@_buildspace</a> project
       </p>
     </Layout>
