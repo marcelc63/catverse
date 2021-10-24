@@ -121,11 +121,49 @@ export default function Component() {
   return (
     <Layout>
       <img src="/screens/Logo.png" className="max-w-lg mb-2" />
-      <p className="mb-4 text-lg">Protect the Catverse from the Big Cat!</p>
+      <p className="mb-4 text-lg">Protect the Catverse from the Boss Cat!</p>
       {renderContent()}
-      <p className="mt-4 text-sm">
-        built by <a className="text-blue-500 underline">@marcelc63</a> as a{' '}
-        <a className="text-blue-500 underline">@_buildspace</a> project
+      <p className="mt-4 font-bold text-sm">
+        Please use the Rinkeby Test Network
+      </p>
+      <p className="mt-1 text-sm">
+        built by{' '}
+        <a
+          className="text-blue-500 underline"
+          href="https://twitter.com/marcelc63"
+          target="_blank"
+        >
+          @marcelc63
+        </a>{' '}
+        as a{' '}
+        <a
+          className="text-blue-500 underline"
+          href="https://twitter.com/_buildspace"
+          target="_blank"
+        >
+          @_buildspace
+        </a>{' '}
+        project
+      </p>
+      <p className="mt-1 text-sm">
+        View Minted Cats on{' '}
+        <a
+          className="text-blue-500 underline"
+          href="https://testnets.opensea.io/collection/catverse"
+          target="_blank"
+        >
+          OpenSea
+        </a>
+      </p>
+      <p className="mt-1 text-sm">
+        Tip me eth at{' '}
+        <a
+          className="text-blue-500 underline"
+          href="https://tipeth.xyz/marcelc63.eth"
+          target="_blank"
+        >
+          tipeth.xyz/marcelc63.eth
+        </a>
       </p>
     </Layout>
   )

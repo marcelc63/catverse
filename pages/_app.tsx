@@ -17,8 +17,11 @@ const MyApp: React.FC<AppProps> = (props: AppProps) => {
   return (
     <Provider store={store}>
       <Head>
-        <title>Next Typescript</title>
-        <meta name="description" content="Next with Typescript" />
+        <title>Catverse - NFT Game</title>
+        <meta
+          name="description"
+          content="Protect the Catverse from the Boss Cat!"
+        />
         <link rel="icon" href="/favicon.ico" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link
