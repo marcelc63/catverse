@@ -67,7 +67,7 @@ const Component: React.FC<IProps> = ({ characterNFT, setCharacterNFT }) => {
 
     const onHealComplete = (newPlayerHp: any) => {
       const playerHp = newPlayerHp.toNumber()
-      console.log(`AttackComplete: Player Hp: ${playerHp}`)
+      console.log(`HealComplete: Player Hp: ${playerHp}`)
       setCharacterNFT((prevState: any) => {
         return { ...prevState, hp: playerHp }
       })
@@ -183,7 +183,7 @@ const Component: React.FC<IProps> = ({ characterNFT, setCharacterNFT }) => {
                     <p
                       className="w-auto hover:bg-gray-300 cursor-pointer mr-4"
                       onClick={() => runAttackAction()}
-                    >{`> Attact ${characterNFT.attackDamage} dmg`}</p>
+                    >{`> Attack ${characterNFT.attackDamage} dmg`}</p>
                     <p
                       className="w-auto hover:bg-gray-300 cursor-pointer"
                       onClick={() => runHealAction()}
